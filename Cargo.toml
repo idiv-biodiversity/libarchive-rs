@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "libarchive-sys",
+    "libarchive",
+]
