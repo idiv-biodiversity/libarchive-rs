@@ -1,8 +1,8 @@
-use std::error::Error as StdError;
+use libarchive_sys as ffi;
+use std::ffi::CStr;
 use std::fmt::{self, Display};
-use std::result::Result as StdResult;
 
-pub type Result<T> = StdResult<T, Error>;
+pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum ErrorKind {
@@ -17,10 +17,19 @@ pub struct Error {
 }
 
 impl Error {
-    pub fn new(message: &str) -> Error {
+    pub(crate) fn new(message: &str) -> Error {
         Error {
             message: String::from(message),
             kind: ErrorKind::LibArchive,
+        }
+    }
+
+    pub(crate) fn from_archive(archive: *mut ffi::archive) -> Error {
+        unsafe {
+            let msg = ffi::archive_error_string(archive);
+            let msg = CStr::from_ptr(msg);
+            let msg = msg.to_string_lossy();
+            Error::new(&msg)
         }
     }
 }
@@ -31,17 +40,17 @@ impl Display for Error {
     }
 }
 
+impl std::error::Error for Error {
+    fn description(&self) -> &str {
+        &*self.message
+    }
+}
+
 impl From<std::io::Error> for Error {
     fn from(error: std::io::Error) -> Self {
         Error {
             message: format!("{}", error),
             kind: ErrorKind::Io,
         }
-    }
-}
-
-impl StdError for Error {
-    fn description(&self) -> &str {
-        &*self.message
     }
 }

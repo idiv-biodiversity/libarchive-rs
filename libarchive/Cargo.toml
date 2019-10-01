@@ -1,6 +1,6 @@
 [package]
 name = "libarchive"
-version = "1.0.0"
+version = "0.1.0"
 authors = ["Christian Krause <christian.krause@mailbox.org>"]
 edition = "2018"
 
@@ -8,5 +8,6 @@ edition = "2018"
 libarchive-sys = { path = "../libarchive-sys" }
 
 [dev-dependencies]
-assert_cmd = "^0.11"
-assert_fs = "^0.11"
+assert_cmd = "2"
+assert_fs = "1"
+predicates = "3"
