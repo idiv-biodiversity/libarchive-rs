@@ -3,3 +3,4 @@ members = [
     "libarchive-sys",
     "libarchive",
 ]
+resolver = "2"

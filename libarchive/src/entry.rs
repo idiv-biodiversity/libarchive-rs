@@ -1,7 +1,7 @@
-use libarchive_sys as ffi;
-use std::convert::TryInto;
 use std::ffi::CStr;
 use std::io::Read;
+
+use libarchive_sys as ffi;
 
 use crate::Error;
 use crate::Result;
@@ -63,7 +63,7 @@ impl Read for Entry {
             ffi::archive_read_data(
                 self.archive,
                 buf.as_mut_ptr() as *mut std::ffi::c_void,
-                buf.len().try_into().unwrap(),
+                buf.len(),
             )
         };
 
@@ -96,10 +96,7 @@ impl<'a> Iterator for Blocks<'a> {
 
                 ffi::fix::ARCHIVE_OK => {
                     let buf = buf as *const u8;
-                    let buf = std::slice::from_raw_parts(
-                        buf,
-                        size.try_into().unwrap(),
-                    );
+                    let buf = std::slice::from_raw_parts(buf, size);
                     Some(Ok(buf))
                 }
 

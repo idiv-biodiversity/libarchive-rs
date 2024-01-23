@@ -1,10 +1,11 @@
-use libarchive_sys as ffi;
 use std::convert::TryInto;
 use std::ffi::{c_void, CString};
 use std::fs::{self, File};
 use std::io::Read;
 use std::os::raw::c_char;
 use std::path::Path;
+
+use libarchive_sys as ffi;
 
 use crate::Entry;
 use crate::Error;
@@ -99,11 +100,7 @@ impl Archive {
             ffi::archive_read_support_filter_all(archive);
             ffi::archive_read_support_format_all(archive);
 
-            match ffi::archive_read_open_filename(
-                archive,
-                path,
-                block_size.try_into().unwrap(),
-            ) {
+            match ffi::archive_read_open_filename(archive, path, block_size) {
                 ffi::fix::ARCHIVE_OK => {
                     let archive = Archive {
                         underlying: archive,
@@ -160,7 +157,7 @@ impl Archive {
                     ffi::archive_write_data(
                         self.underlying,
                         buf.as_ptr() as *mut c_void,
-                        nbytes.try_into().unwrap(),
+                        nbytes,
                     );
                 } else {
                     break;

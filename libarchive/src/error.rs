@@ -1,6 +1,7 @@
-use libarchive_sys as ffi;
 use std::ffi::CStr;
 use std::fmt::{self, Display};
+
+use libarchive_sys as ffi;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -42,7 +43,7 @@ impl Display for Error {
 
 impl std::error::Error for Error {
     fn description(&self) -> &str {
-        &*self.message
+        &self.message
     }
 }
 
